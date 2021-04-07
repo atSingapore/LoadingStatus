@@ -24,6 +24,7 @@
         android:id="@+id/imageView"
         android:layout_width="200sp"
         android:layout_height="200sp"
+        android:layout_marginTop="32dp"
         android:contentDescription="@string/download_image"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -34,36 +35,36 @@
     <RadioGroup
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="120dp"
+        android:layout_marginEnd="120dp"
         app:layout_constraintBottom_toTopOf="@+id/custom_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
-        >
+        app:layout_constraintTop_toBottomOf="@+id/imageView">
 
         <RadioButton
             android:id="@+id/glideButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="RadioButton"
             android:onClick="@{loadingViewModel.onGlideSelected}"
-            />
+            android:text="@string/radio_button_1_text" />
 
-<!--        android:onClick="@{(selection)->loadingViewModel.onGlideSelected(selection)}"-->
+        <!--        android:onClick="@{(selection)->loadingViewModel.onGlideSelected(selection)}"-->
 
         <RadioButton
             android:id="@+id/loadAppButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="RadioButton"
-            android:onClick="@{loadingViewModel.onLoadAppSelected}"/>
+            android:onClick="@{loadingViewModel.onLoadAppSelected}"
+            android:text="@string/radio_button_2_text" />
 
         <RadioButton
             android:id="@+id/retrofitButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="RadioButton"
-            android:onClick="@{loadingViewModel.onRetrofitSelected}"/>
+            android:onClick="@{loadingViewModel.onRetrofitSelected}"
+            android:text="@string/radio_button_3_text" />
     </RadioGroup>
 
     <com.udacity.LoadingButton
