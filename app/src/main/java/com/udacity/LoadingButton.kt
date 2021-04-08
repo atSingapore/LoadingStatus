@@ -3,6 +3,7 @@ package com.udacity
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.util.AttributeSet
@@ -21,6 +22,7 @@ class LoadingButton @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
     private var widthSize = 0f
     private var heightSize = 0f
+    private var buttonText: String? = null
 
     private var valueAnimator = ValueAnimator()
     // ButtonState.Complete is set as the initial value
@@ -31,7 +33,8 @@ class LoadingButton @JvmOverloads constructor(
             // advice from mentor
             ButtonState.Loading -> {
                 Log.i("LoadingButton","Button state changed from complete to loading")
-                //TODO - Show loading text
+                //TODO - Show loading text (access string resource)
+                buttonText = "We are loading"
 
                 //start the loading animation
                 // Change this
@@ -51,6 +54,7 @@ class LoadingButton @JvmOverloads constructor(
             }
             //similarly handle the other 2 states as well
             ButtonState.Completed -> {
+                buttonText = "Click me"
                 Log.i("LoadingButton","Button state changed from loading to complete")
                 //TODO - Show Completed Text
                 valueAnimator.cancel()
@@ -103,8 +107,9 @@ class LoadingButton @JvmOverloads constructor(
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        widthSize = width / 1f
+        widthSize = width / 1.0f
         heightSize = width / 8f
+        buttonText = "Click me"
     }
 
     //TODO - Function to compute loading filler size for specific loading status?
@@ -125,6 +130,12 @@ class LoadingButton @JvmOverloads constructor(
         canvas.drawRect((width/2-widthSize/2).toFloat(), (height/2 - heightSize/2).toFloat(), (width/2-widthSize/2+loadingStatus).toFloat(), (height/2+heightSize/2).toFloat(), paint)
 
         //TODO - Draw the loading labels
+
+        paint.color = Color.BLACK
+        buttonText?.let {
+            canvas.drawText(buttonText!!, width/2-widthSize/5, height/2-heightSize*0, paint)
+        }
+
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
