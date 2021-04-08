@@ -47,7 +47,7 @@
             android:id="@+id/glideButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="@{loadingViewModel.onGlideSelected}"
+            android:onClick="onGlideSelected"
             android:text="@string/radio_button_1_text" />
 
         <!--        android:onClick="@{(selection)->loadingViewModel.onGlideSelected(selection)}"-->
@@ -56,14 +56,16 @@
             android:id="@+id/loadAppButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="@{loadingViewModel.onLoadAppSelected}"
+            android:onClick="onLoadAppSelected"
             android:text="@string/radio_button_2_text" />
+
+  <!--      android:onClick="@{loadingViewModel.onLoadAppSelected}"-->
 
         <RadioButton
             android:id="@+id/retrofitButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="@{loadingViewModel.onRetrofitSelected}"
+            android:onClick="onRetrofitSelected"
             android:text="@string/radio_button_3_text" />
     </RadioGroup>
 

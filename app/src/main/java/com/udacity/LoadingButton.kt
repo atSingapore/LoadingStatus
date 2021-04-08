@@ -53,6 +53,26 @@ class LoadingButton @JvmOverloads constructor(
 
     }
 
+    // You can animate values of some type of duration
+//    ValueAnimator.ofFloat(0f, 100f).apply {
+//        duration = 1000
+//        start()
+//    }
+
+    // You can use the values of the animation
+//    ValueAnimator.ofObject(...).apply {
+//        ...
+//        addUpdateListener { updatedAnimation ->
+//            // You can use the animated value in a property that uses the
+//            // same type as the animation. In this case, you can use the
+//            // float value in the translationX property.
+//            textView.translationX = updatedAnimation.animatedValue as Float
+//        }
+//        ...
+//    }
+
+
+
     //TODO - what happens to button once clicked
     override fun performClick(): Boolean {
         super.performClick()
