@@ -21,12 +21,13 @@ import kotlinx.android.synthetic.main.content_main.*
 class MainActivity : AppCompatActivity() {
 
     private var downloadID: Long = 0
+    var selectedURL: String? = null
 
     private lateinit var notificationManager: NotificationManager
     private lateinit var pendingIntent: PendingIntent
     private lateinit var action: NotificationCompat.Action
 
-    var selectedURL = ""
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,8 +39,11 @@ class MainActivity : AppCompatActivity() {
 
         custom_button.setOnClickListener {
 
-            //TODO - selected url
             download()
+            //TODO - Reset the button state to toggle the animation to stop
+            // customButton.buttonState = ButtonState.Loading
+            // Advice from mentor
+            custom_button.buttonState = ButtonState.Loading
         }
 
     }
@@ -48,26 +52,40 @@ class MainActivity : AppCompatActivity() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
 
-            //TODO - Reset the button state to toggle the animation to stop
-            // customButton.buttonState = ButtonState.Completed
+            //TODO - if id == downloadID
+
+            if(downloadID == id) {
+
+                // Reset download state
+                custom_button.buttonState = ButtonState.Completed
+            }
+
         }
     }
 
     private fun download() {
-        val request =
-            DownloadManager.Request(Uri.parse(URL))
-                .setTitle(getString(R.string.app_name))
-                .setDescription(getString(R.string.app_description))
-                .setRequiresCharging(false)
-                .setAllowedOverMetered(true)
-                .setAllowedOverRoaming(true)
-        //TODO - Set button state which will toggle the animation to start
-        // customButton.buttonState = ButtonState.Loading
+        //TODO - this statement is not working
+        if(selectedURL != null)
+        {
+            Log.i("MainViewModel", "downloading $selectedURL")
+            val request =
+                    DownloadManager.Request(Uri.parse(selectedURL)) // previously was URL
+                            .setTitle(getString(R.string.app_name))
+                            .setDescription(getString(R.string.app_description))
+                            .setRequiresCharging(false)
+                            .setAllowedOverMetered(true)
+                            .setAllowedOverRoaming(true)
 
 
-        val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
-        downloadID =
-            downloadManager.enqueue(request)// enqueue puts the download request in the queue.
+            val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
+            downloadID =
+                    downloadManager.enqueue(request)// enqueue puts the download request in the queue.
+        } else {
+            //TODO - set loading state to completed - this is not working
+            custom_button.buttonState = ButtonState.Completed
+            //TODO - show a toast to remind user to select a file
+            Log.i("MainActivity", "File was not selected")
+        }
     }
 
     //TODO - update to selectedURL
@@ -113,3 +131,5 @@ class MainActivity : AppCompatActivity() {
         selectedURL = "https://github.com/square/retrofit/archive/refs/heads/master.zip"
     }
 }
+
+

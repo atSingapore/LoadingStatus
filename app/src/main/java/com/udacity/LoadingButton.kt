@@ -21,12 +21,44 @@ class LoadingButton @JvmOverloads constructor(
     private var widthSize = 0f
     private var heightSize = 0f
 
-    private val valueAnimator = ValueAnimator()
-    private var buttonState: ButtonState by Delegates.observable<ButtonState>(ButtonState.Completed) { p, old, new ->
+    private var valueAnimator = ValueAnimator()
+    var buttonState: ButtonState by Delegates.observable<ButtonState>(ButtonState.Completed) { p, old, new ->
         Log.i("LoadingButton","Button state changed")
+
+
+        when(new) {
+            // advice from mentor
+            ButtonState.Loading -> {
+                //start the loading animation
+                // Change this
+                valueAnimator = ValueAnimator.ofFloat(0f, widthSize).apply {
+                    duration = 3000
+                    addUpdateListener {valueAnimator ->
+                        loadingStatus = valueAnimator.animatedValue as Float
+                        invalidate()
+                    }
+//                    repeatMode = ValueAnimator.REVERSE
+//                    repeatCount = ValueAnimator.INFINITE
+                }
+                valueAnimator.repeatMode = ValueAnimator.REVERSE
+                valueAnimator.repeatCount = ValueAnimator.INFINITE
+                valueAnimator.start()
+
+                //TODO - set the text
+            }
+            //similarly handle the other 2 states as well
+            ButtonState.Completed -> {
+                valueAnimator.cancel()
+                loadingStatus = 0.0f
+                invalidate()
+            }
+        }
+
+
+
     }
 
-    private var loadingStatus = 0.0
+    private var loadingStatus = 0.0f
 
     // Variables to cache the attributed value
     private var buttonBaseColor = 0
@@ -53,25 +85,6 @@ class LoadingButton @JvmOverloads constructor(
 
     }
 
-    // You can animate values of some type of duration
-//    ValueAnimator.ofFloat(0f, 100f).apply {
-//        duration = 1000
-//        start()
-//    }
-
-    // You can use the values of the animation
-//    ValueAnimator.ofObject(...).apply {
-//        ...
-//        addUpdateListener { updatedAnimation ->
-//            // You can use the animated value in a property that uses the
-//            // same type as the animation. In this case, you can use the
-//            // float value in the translationX property.
-//            textView.translationX = updatedAnimation.animatedValue as Float
-//        }
-//        ...
-//    }
-
-
 
     //TODO - what happens to button once clicked
     override fun performClick(): Boolean {
@@ -93,16 +106,15 @@ class LoadingButton @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        //TODO - Set the button color based on the loading status?
+        // Set the button color based on the loading status?
         paint.color = buttonBaseColor
 
         // Draw the base button
         canvas.drawRect((width/2-widthSize/2).toFloat(), (height/2 - heightSize/2).toFloat(), (width/2+widthSize/2).toFloat(), (height/2+heightSize/2).toFloat(), paint)
 
-        //TODO - Draw the loading rounded filler
+        // raw the loading rounded filler
         paint.color = buttonLoadingColor
-        canvas.drawRect((width/2-widthSize/2).toFloat(), (height/2 - heightSize/2).toFloat(), (width/2+(widthSize/2)*loadingStatus).toFloat(), (height/2+heightSize/2).toFloat(), paint)
-
+        canvas.drawRect((width/2-widthSize/2).toFloat(), (height/2 - heightSize/2).toFloat(), (0+loadingStatus).toFloat(), (height/2+heightSize/2).toFloat(), paint)
 
         //TODO - Draw the loading labels
     }
