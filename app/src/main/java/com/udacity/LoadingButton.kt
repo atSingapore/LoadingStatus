@@ -6,6 +6,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import androidx.core.content.withStyledAttributes
 import kotlin.properties.Delegates
@@ -22,8 +23,10 @@ class LoadingButton @JvmOverloads constructor(
 
     private val valueAnimator = ValueAnimator()
     private var buttonState: ButtonState by Delegates.observable<ButtonState>(ButtonState.Completed) { p, old, new ->
-
+        Log.i("LoadingButton","Button state changed")
     }
+
+    private var loadingStatus = 0.0
 
     // Variables to cache the attributed value
     private var buttonBaseColor = 0
@@ -48,8 +51,16 @@ class LoadingButton @JvmOverloads constructor(
             buttonLoadingColor = getColor(R.styleable.LoadingButton_loadingColor, 0)
         }
 
-        //TODO - Where is color actually set?
+    }
 
+    //TODO - what happens to button once clicked
+    override fun performClick(): Boolean {
+        super.performClick()
+    buttonState = ButtonState.Clicked
+
+//        loadingStatus = 0.5
+//        invalidate()
+        return true
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -63,11 +74,15 @@ class LoadingButton @JvmOverloads constructor(
         super.onDraw(canvas)
 
         //TODO - Set the button color based on the loading status?
+        paint.color = buttonBaseColor
 
-        //TODO - Draw the base button
+        // Draw the base button
         canvas.drawRect((width/2-widthSize/2).toFloat(), (height/2 - heightSize/2).toFloat(), (width/2+widthSize/2).toFloat(), (height/2+heightSize/2).toFloat(), paint)
 
         //TODO - Draw the loading rounded filler
+        paint.color = buttonLoadingColor
+        canvas.drawRect((width/2-widthSize/2).toFloat(), (height/2 - heightSize/2).toFloat(), (width/2+(widthSize/2)*loadingStatus).toFloat(), (height/2+heightSize/2).toFloat(), paint)
+
 
         //TODO - Draw the loading labels
     }
