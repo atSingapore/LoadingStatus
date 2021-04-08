@@ -8,6 +8,7 @@ import android.graphics.Typeface
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import androidx.core.content.withStyledAttributes
 import kotlin.properties.Delegates
 
@@ -22,35 +23,42 @@ class LoadingButton @JvmOverloads constructor(
     private var heightSize = 0f
 
     private var valueAnimator = ValueAnimator()
-    var buttonState: ButtonState by Delegates.observable<ButtonState>(ButtonState.Completed) { p, old, new ->
-        Log.i("LoadingButton","Button state changed")
+    // ButtonState.Complete is set as the initial value
+    var buttonState: ButtonState by Delegates.observable<ButtonState>(ButtonState.Completed) { property, oldValue, newValue ->
+        Log.i("LoadingButton","Checking if button state changed...")
 
-
-        when(new) {
+        when(newValue) {
             // advice from mentor
             ButtonState.Loading -> {
+                Log.i("LoadingButton","Button state changed from complete to loading")
+                //TODO - Show loading text
+
                 //start the loading animation
                 // Change this
                 valueAnimator = ValueAnimator.ofFloat(0f, widthSize).apply {
                     duration = 3000
                     addUpdateListener {valueAnimator ->
                         loadingStatus = valueAnimator.animatedValue as Float
-                        invalidate()
+                        invalidate() // redraws the button
                     }
 //                    repeatMode = ValueAnimator.REVERSE
 //                    repeatCount = ValueAnimator.INFINITE
                 }
                 valueAnimator.repeatMode = ValueAnimator.REVERSE
-                valueAnimator.repeatCount = ValueAnimator.INFINITE
+                //valueAnimator.repeatCount = ValueAnimator.INFINITE
                 valueAnimator.start()
 
-                //TODO - set the text
             }
             //similarly handle the other 2 states as well
             ButtonState.Completed -> {
+                Log.i("LoadingButton","Button state changed from loading to complete")
+                //TODO - Show Completed Text
                 valueAnimator.cancel()
                 loadingStatus = 0.0f
-                invalidate()
+                invalidate() // redraws the button
+            }
+            else -> {
+
             }
         }
 
@@ -89,10 +97,8 @@ class LoadingButton @JvmOverloads constructor(
     //TODO - what happens to button once clicked
     override fun performClick(): Boolean {
         super.performClick()
-    buttonState = ButtonState.Clicked
+    //buttonState = ButtonState.Clicked
 
-//        loadingStatus = 0.5
-//        invalidate()
         return true
     }
 
@@ -111,6 +117,8 @@ class LoadingButton @JvmOverloads constructor(
 
         // Draw the base button
         canvas.drawRect((width/2-widthSize/2).toFloat(), (height/2 - heightSize/2).toFloat(), (width/2+widthSize/2).toFloat(), (height/2+heightSize/2).toFloat(), paint)
+
+        //TODO - canvas.drawText(buttonText, 0, 0, paintText)
 
         // raw the loading rounded filler
         paint.color = buttonLoadingColor

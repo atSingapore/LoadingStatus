@@ -36,14 +36,12 @@ class MainActivity : AppCompatActivity() {
 
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
-
         custom_button.setOnClickListener {
 
             download()
-            //TODO - Reset the button state to toggle the animation to stop
-            // customButton.buttonState = ButtonState.Loading
+            // Reset the button state to toggle the animation to stop
             // Advice from mentor
-            custom_button.buttonState = ButtonState.Loading
+//            custom_button.buttonState = ButtonState.Loading
         }
 
     }
@@ -51,8 +49,6 @@ class MainActivity : AppCompatActivity() {
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
-
-            //TODO - if id == downloadID
 
             if(downloadID == id) {
 
@@ -64,9 +60,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun download() {
-        //TODO - this statement is not working
+        // If a radio button has been selected
         if(selectedURL != null)
         {
+            custom_button.buttonState = ButtonState.Loading
+
             Log.i("MainViewModel", "downloading $selectedURL")
             val request =
                     DownloadManager.Request(Uri.parse(selectedURL)) // previously was URL
@@ -80,15 +78,20 @@ class MainActivity : AppCompatActivity() {
             val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
             downloadID =
                     downloadManager.enqueue(request)// enqueue puts the download request in the queue.
-        } else {
+        } else
+        {
+            // If a radio button has not been selected
+            Log.i("MainActivity", "File was not selected")
+
             //TODO - set loading state to completed - this is not working
             custom_button.buttonState = ButtonState.Completed
+
             //TODO - show a toast to remind user to select a file
-            Log.i("MainActivity", "File was not selected")
+
         }
     }
 
-    //TODO - update to selectedURL
+    // Update to selectedURL
     private fun downloadOld() {
         val request =
                 DownloadManager.Request(Uri.parse(URL))
