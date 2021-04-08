@@ -103,7 +103,7 @@ class LoadingButton @JvmOverloads constructor(
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        widthSize = width / 1.2f
+        widthSize = width / 1f
         heightSize = width / 8f
     }
 
@@ -122,7 +122,7 @@ class LoadingButton @JvmOverloads constructor(
 
         // raw the loading rounded filler
         paint.color = buttonLoadingColor
-        canvas.drawRect((width/2-widthSize/2).toFloat(), (height/2 - heightSize/2).toFloat(), (0+loadingStatus).toFloat(), (height/2+heightSize/2).toFloat(), paint)
+        canvas.drawRect((width/2-widthSize/2).toFloat(), (height/2 - heightSize/2).toFloat(), (width/2-widthSize/2+loadingStatus).toFloat(), (height/2+heightSize/2).toFloat(), paint)
 
         //TODO - Draw the loading labels
     }
