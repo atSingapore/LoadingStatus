@@ -48,7 +48,7 @@ class LoadingButton @JvmOverloads constructor(
 //                    repeatCount = ValueAnimator.INFINITE
                 }
                 valueAnimator.repeatMode = ValueAnimator.REVERSE
-                //valueAnimator.repeatCount = ValueAnimator.INFINITE
+                valueAnimator.repeatCount = ValueAnimator.INFINITE
                 valueAnimator.start()
 
             }
@@ -65,9 +65,6 @@ class LoadingButton @JvmOverloads constructor(
 
             }
         }
-
-
-
     }
 
     private var loadingStatus = 0.0f
@@ -94,28 +91,23 @@ class LoadingButton @JvmOverloads constructor(
             buttonBaseColor = getColor(R.styleable.LoadingButton_notLoadingColor, 0)
             buttonLoadingColor = getColor(R.styleable.LoadingButton_loadingColor, 0)
         }
-
     }
 
-
-    //TODO - what happens to button once clicked
     override fun performClick(): Boolean {
         super.performClick()
-    //buttonState = ButtonState.Clicked
-
         return true
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        widthSize = width / 1.0f
-        heightSize = width / 8f
+        widthSize = width.toFloat()
+        heightSize = height.toFloat()
         buttonText = "Click me"
     }
 
-    //TODO - Function to compute loading filler size for specific loading status?
-
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+
+        //canvas.translate(0f, -heightSize/2)
 
         // Set the button color based on the loading status?
         paint.color = buttonBaseColor
@@ -123,19 +115,17 @@ class LoadingButton @JvmOverloads constructor(
         // Draw the base button
         canvas.drawRect((width/2-widthSize/2).toFloat(), (height/2 - heightSize/2).toFloat(), (width/2+widthSize/2).toFloat(), (height/2+heightSize/2).toFloat(), paint)
 
-        //TODO - canvas.drawText(buttonText, 0, 0, paintText)
-
         // raw the loading rounded filler
         paint.color = buttonLoadingColor
         canvas.drawRect((width/2-widthSize/2).toFloat(), (height/2 - heightSize/2).toFloat(), (width/2-widthSize/2+loadingStatus).toFloat(), (height/2+heightSize/2).toFloat(), paint)
 
-        //TODO - Draw the loading labels
 
+        // Draw the loading labels
         paint.color = Color.BLACK
         buttonText?.let {
             canvas.drawText(buttonText!!, width/2-widthSize/5, height/2-heightSize*0, paint)
-        }
 
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -150,5 +140,4 @@ class LoadingButton @JvmOverloads constructor(
         heightSize = h.toFloat()
         setMeasuredDimension(w, h)
     }
-
 }
