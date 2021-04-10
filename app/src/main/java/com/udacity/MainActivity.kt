@@ -12,6 +12,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -21,6 +22,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import java.io.File
 
 
 const val FILE_NAME = "File Name"
@@ -42,6 +44,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
+        status = getString(R.string.fail_text)
+
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
         custom_button.setOnClickListener {
@@ -52,15 +56,33 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val receiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
+        override fun onReceive(context: Context?, intent: Intent?)
+        {
+            Log.i("MainActivity", "onReceive called")
+
+            status = getString(R.string.success_text)
+
             val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
 
             if(downloadID == id)
             {
-
                 // Reset download state
                 custom_button.buttonState = ButtonState.Completed
+
+                val query = DownloadManager.Query().setFilterById(id)
+                val downloadManager = context!!.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                val cursor = downloadManager.query(query)
+                if(cursor.moveToFirst()) {
+                    val statusValue = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
+                    status = if (statusValue == DownloadManager.STATUS_SUCCESSFUL) {
+                        getString(R.string.success_text)
+                    } else {
+                        getString(R.string.fail_text)
+                    }
+                }
+
             }
+
         }
     }
 
@@ -70,6 +92,13 @@ class MainActivity : AppCompatActivity() {
         {
             custom_button.buttonState = ButtonState.Loading
 
+            // Make a directory
+//            val direct = File(getExternalFilesDir(null), "/repos")
+//            if (!direct.exists()) {
+//                direct.mkdirs()
+//            }
+
+
             Log.i("MainViewModel", "downloading $selectedURL")
             val request =
                     DownloadManager.Request(Uri.parse(selectedURL)) // previously was URL
@@ -78,8 +107,11 @@ class MainActivity : AppCompatActivity() {
                             .setRequiresCharging(false)
                             .setAllowedOverMetered(true)
                             .setAllowedOverRoaming(true)
+                            // Save in directory
+                            //.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,"/repos/repository.zip" )
 
             val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
+
             downloadID =
                     downloadManager.enqueue(request)// enqueue puts the download request in the queue.
 
@@ -139,6 +171,7 @@ class MainActivity : AppCompatActivity() {
     {
         Log.i("MainActivity", "onGlideSelected")
         selectedURL = getString(R.string.glide_file_url)
+        //selectedURL = "https://github.com/bumptech/glide/archive/refs/heads/master.zip"
         fileName = getString(R.string.glide_file_name)
     }
 
@@ -168,9 +201,7 @@ class MainActivity : AppCompatActivity() {
         val contentIntent = Intent(applicationContext, DetailActivity::class.java)
 
         // Set status to success
-        status = getString(R.string.success_text)
-
-        // put extra
+        //status = getString(R.string.success_text)
 
         contentIntent.putExtra(FILE_NAME, fileName)
         contentIntent.putExtra(STATUS, status)
