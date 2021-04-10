@@ -160,6 +160,45 @@ class MainActivity : AppCompatActivity() {
         Log.i("MainActivity", "onRetrofitSelected")
         selectedURL = "https://github.com/square/retrofit/archive/refs/heads/master.zip"
     }
+
+    // Pulled from NotificationUtils
+
+    private val CHANNEL_ID = 0
+    private val CHANNEL = "Downloads"
+
+    // This is the code needed to create and trigger a notification
+    fun NotificationManager.sendNotification(messageBody: String, applicationContext: Context) {
+
+        // Create intent with applicationContext and activity to be launched
+        val contentIntent = Intent(applicationContext, DetailActivity::class.java)
+
+        // Create pending intent - System will use the pending intent to open your app
+        // The PendingIntent flag specifies the option to create a new pending intent or use an existing one
+        pendingIntent = PendingIntent.getActivity(
+                applicationContext,
+                CHANNEL_ID,
+                contentIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT)
+
+
+
+
+        // Get an instance of NotificationCompat.Builder
+        val builder = NotificationCompat.Builder(
+                applicationContext,
+                applicationContext.getString(R.string.notification_id))
+                // Set title, text and icon to builder
+                .setSmallIcon(R.drawable.circle_icons_download)
+                .setContentTitle(applicationContext.getString(R.string.notification_title))
+                .setContentText(messageBody)
+
+                // Pass pending intent to notification
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+
+        // Call notify to send the notification
+        notify(CHANNEL_ID, builder.build())
+    }
 }
 
 
