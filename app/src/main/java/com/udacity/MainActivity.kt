@@ -23,16 +23,19 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
 
+const val FILE_NAME = "File Name"
+const val STATUS = "Status"
+
 class MainActivity : AppCompatActivity() {
 
     private var downloadID: Long = 0
-    var selectedURL: String? = null
+    private var selectedURL: String? = null
+    private var fileName: String? = null
+    private var status = " "
 
     private lateinit var notificationManager: NotificationManager
     private lateinit var pendingIntent: PendingIntent
     private lateinit var action: NotificationCompat.Action
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,24 +48,18 @@ class MainActivity : AppCompatActivity() {
             download()
         }
 
-        // EggTimerFragment.kt
-        // TODO: Step 1.7 call createChannel
-        createChannel(
-                getString(R.string.notification_id),
-                getString(R.string.notification_title)
-        )
-
+        createChannel(getString(R.string.notification_id), getString(R.string.notification_title))
     }
 
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
 
-            if(downloadID == id) {
+            if(downloadID == id)
+            {
 
                 // Reset download state
                 custom_button.buttonState = ButtonState.Completed
-
             }
         }
     }
@@ -82,16 +79,15 @@ class MainActivity : AppCompatActivity() {
                             .setAllowedOverMetered(true)
                             .setAllowedOverRoaming(true)
 
-
             val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
             downloadID =
                     downloadManager.enqueue(request)// enqueue puts the download request in the queue.
 
-            //val notificationManager = ContextCompat.getSystemService(applicationContext, NotificationManager::class.java) as NotificationManager
-
             notificationManager = ContextCompat.getSystemService(applicationContext, NotificationManager::class.java) as NotificationManager
             if(this::notificationManager.isInitialized) {
-                notificationManager.sendNotification(applicationContext.getString(R.string.notification_description), applicationContext)
+                notificationManager.sendNotification(
+                        applicationContext.getString(R.string.notification_description),
+                        applicationContext)
             }
 
         } else
@@ -109,7 +105,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createChannel(channelId: String, channelName: String) {
-        // TODO: Step 1.6 START create a channel
+        // START create a channel
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationChannel = NotificationChannel(
                     channelId,
@@ -128,17 +124,13 @@ class MainActivity : AppCompatActivity() {
             )
             notificationManager.createNotificationChannel(notificationChannel)
 
-
-            // TODO: Step 1.6 END create channel
-
-
         }
 
-        val builder = NotificationCompat.Builder(
-                applicationContext,
-                // TODO: Step 1.8 verify the notification channel name
-                applicationContext.getString(R.string.notification_id)
-        )
+//        val builder = NotificationCompat.Builder(
+//                applicationContext,
+//                // TODO: Step 1.8 verify the notification channel name
+//                applicationContext.getString(R.string.notification_id)
+//        )
     }
 
 
@@ -146,19 +138,22 @@ class MainActivity : AppCompatActivity() {
     fun onGlideSelected(view: View)
     {
         Log.i("MainActivity", "onGlideSelected")
-        selectedURL = "https://github.com/bumptech/glide/archive/refs/heads/master.zip"
+        selectedURL = getString(R.string.glide_file_url)
+        fileName = getString(R.string.glide_file_name)
     }
 
     fun onLoadAppSelected(view: View)
     {
         Log.i("MainActivity", "onLoadAppSelected")
-        selectedURL = "https://github.com/udacity/nd940-c3-advanced-android-programming-project-starter/archive/refs/heads/master.zip"
+        selectedURL = getString(R.string.udacity_file_url)
+        fileName = getString(R.string.udacity_file_name)
     }
 
     fun onRetrofitSelected(view: View)
     {
         Log.i("MainActivity", "onRetrofitSelected")
-        selectedURL = "https://github.com/square/retrofit/archive/refs/heads/master.zip"
+        selectedURL = getString(R.string.retrofit_file_url)
+        fileName = getString(R.string.retrofit_file_name)
     }
 
     // Pulled from NotificationUtils
@@ -172,6 +167,14 @@ class MainActivity : AppCompatActivity() {
         // Create intent with applicationContext and activity to be launched
         val contentIntent = Intent(applicationContext, DetailActivity::class.java)
 
+        // Set status to success
+        status = getString(R.string.success_text)
+
+        // put extra
+
+        contentIntent.putExtra(FILE_NAME, fileName)
+        contentIntent.putExtra(STATUS, status)
+
         // Create pending intent - System will use the pending intent to open your app
         // The PendingIntent flag specifies the option to create a new pending intent or use an existing one
         pendingIntent = PendingIntent.getActivity(
@@ -179,9 +182,6 @@ class MainActivity : AppCompatActivity() {
                 CHANNEL_ID,
                 contentIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT)
-
-
-
 
         // Get an instance of NotificationCompat.Builder
         val builder = NotificationCompat.Builder(
@@ -199,6 +199,12 @@ class MainActivity : AppCompatActivity() {
         // Call notify to send the notification
         notify(CHANNEL_ID, builder.build())
     }
+
+    // We want to be able to access without having instance of class
+//    companion object {
+//        const val FILE_NAME = "File Name"
+//        const val STATUS = "Status"
+//    }
 }
 
 

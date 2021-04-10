@@ -16,4 +16,20 @@
     <string name="radio_button_1_text">Glide - Image Loading Library by BumpTech</string>
     <string name="radio_button_2_text">LoadApp - Current repository by Udacity</string>
     <string name="radio_button_3_text">Retrofit - Type-safe HTTP client for Android and Java by Square, Inc</string>
+
+    <string name="file_name_label">File Name</string>
+    <string name="status_label">Status</string>
+
+    <string name="glide_file_name">Glide - Image Loading Library by BumpTech</string>
+    <string name="udacity_file_name">LoadApp - Current repository by Udacity</string>
+    <string name="retrofit_file_name">Retrofit - Type-safe HTTP client for Android and Java by Square, Inc</string>
+
+    <string name="glide_file_url">https://github.com/bumptech/glide/archive/refs/heads/master.zip</string>
+    <string name="udacity_file_url">https://github.com/udacity/nd940-c3-advanced-android-programming-project-starter/archive/refs/heads/master.zip</string>
+    <string name="retrofit_file_url">https://github.com/square/retrofit/archive/refs/heads/master.zip</string>
+
+    <string name="success_text">Success</string>
+    <string name="fail_text">Fail</string>
+    <string name="ok_button_text">OK</string>
+
 </resources>
