@@ -5,7 +5,7 @@
     <Transition
         app:constraintSetEnd="@id/end"
         app:constraintSetStart="@+id/start"
-        app:duration="200"
+        app:duration="2000"
         app:autoTransition="animateToEnd">
 <!--        <OnClick
             app:targetId="@id/status_text"
@@ -18,15 +18,13 @@
     <ConstraintSet android:id="@+id/start">
         <Constraint
             android:id="@+id/status_text"
-            android:textSize="20dp"
+
 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="30dp"
             android:layout_marginEnd="24dp"
-            android:text="Status Placeholder"
-            android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
@@ -37,7 +35,7 @@
     <ConstraintSet android:id="@+id/end">
         <Constraint
             android:id="@id/status_text"
-            android:textSize="40dp"
+
 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -49,7 +47,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/status_label"
+            app:layout_constraintBottom_toTopOf="@+id/ok_button"
             />
     </ConstraintSet>
 

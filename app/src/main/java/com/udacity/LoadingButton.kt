@@ -23,6 +23,9 @@ class LoadingButton @JvmOverloads constructor(
     private var buttonText: String? = null
 
     private var valueAnimator = ValueAnimator()
+    private var circleAnimator = ValueAnimator()
+    private var arcSweepAngle = 0f
+
     // ButtonState.Complete is set as the initial value
     var buttonState: ButtonState by Delegates.observable<ButtonState>(ButtonState.Completed) { property, oldValue, newValue ->
         Log.i("LoadingButton","Checking if button state changed...")
@@ -47,6 +50,26 @@ class LoadingButton @JvmOverloads constructor(
                 valueAnimator.repeatCount = ValueAnimator.INFINITE
                 valueAnimator.start()
 
+
+
+
+                /////
+                circleAnimator = ValueAnimator.ofFloat(0F, 360F, arcSweepAngle).apply {
+                    duration = 1000
+                    addUpdateListener { valueAnimator ->
+                        arcSweepAngle = valueAnimator.animatedValue as Float
+                        valueAnimator.repeatCount = ValueAnimator.INFINITE
+
+                        invalidate()
+                    }
+                    //start()
+                }
+                circleAnimator.start()
+                /////
+
+
+
+
             }
             //similarly handle the other 2 states as well
             ButtonState.Completed -> {
@@ -68,6 +91,7 @@ class LoadingButton @JvmOverloads constructor(
     // Variables to cache the attributed value
     private var buttonBaseColor = 0
     private var buttonLoadingColor = 0
+    private var arcColor = 0
 
     // Initialize paint object
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -86,6 +110,7 @@ class LoadingButton @JvmOverloads constructor(
         context.withStyledAttributes(attrs, R.styleable.LoadingButton) {
             buttonBaseColor = getColor(R.styleable.LoadingButton_notLoadingColor, 0)
             buttonLoadingColor = getColor(R.styleable.LoadingButton_loadingColor, 0)
+            arcColor = getColor(R.styleable.LoadingButton_arcColor, 0)
         }
     }
 
@@ -115,14 +140,18 @@ class LoadingButton @JvmOverloads constructor(
 
         // Draw the loading labels
         paint.color = Color.WHITE
-
         buttonText?.let {
             var bounds: Rect = Rect()
             paint.getTextBounds(buttonText, 0, buttonText!!.length, bounds)
             var textHeight = bounds.height()
             canvas.drawText(buttonText!!, width/2.toFloat(), (height/2+textHeight/2).toFloat(), paint)
-
         }
+
+        // Draw the circle
+        paint.color = arcColor
+        var arcBounds: RectF = RectF((width*0.85-20).toFloat(), (height/2-20).toFloat(), (width*0.85+20).toFloat(), (height/2+20).toFloat())
+        canvas.drawArc(arcBounds,0f, arcSweepAngle,true,paint)
+
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

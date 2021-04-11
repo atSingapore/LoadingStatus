@@ -4,5 +4,6 @@
 <!--   TODO: create custom attributes for the view-->
         <attr name="notLoadingColor" format="color"/>
         <attr name="loadingColor" format="color"/>
+        <attr name="arcColor" format="color"/>
     </declare-styleable>
 </resources>

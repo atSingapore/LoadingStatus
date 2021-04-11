@@ -228,6 +228,7 @@ class MainActivity : AppCompatActivity() {
                 // Pass pending intent to notification
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
+                .addAction(0, resources.getString(R.string.click_message),pendingIntent)
 
         // Call notify to send the notification
         notify(CHANNEL_ID, builder.build())
