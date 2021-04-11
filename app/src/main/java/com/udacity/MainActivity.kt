@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import java.io.File
@@ -80,9 +81,13 @@ class MainActivity : AppCompatActivity() {
                         getString(R.string.fail_text)
                     }
                 }
-
             }
 
+            notificationManager = ContextCompat.getSystemService(applicationContext, NotificationManager::class.java) as NotificationManager
+            notificationManager.sendNotification(
+                    applicationContext.getString(R.string.notification_description),
+                    applicationContext)
+        //if(this::notificationManager.isInitialized) { }
         }
     }
 
@@ -115,12 +120,14 @@ class MainActivity : AppCompatActivity() {
             downloadID =
                     downloadManager.enqueue(request)// enqueue puts the download request in the queue.
 
-            notificationManager = ContextCompat.getSystemService(applicationContext, NotificationManager::class.java) as NotificationManager
-            if(this::notificationManager.isInitialized) {
-                notificationManager.sendNotification(
-                        applicationContext.getString(R.string.notification_description),
-                        applicationContext)
-            }
+//            notificationManager = ContextCompat.getSystemService(applicationContext, NotificationManager::class.java) as NotificationManager
+//            if(this::notificationManager.isInitialized) {
+//                notificationManager.sendNotification(
+//                        applicationContext.getString(R.string.notification_description),
+//                        applicationContext)
+//            }
+
+
 
         } else
         {
@@ -130,22 +137,23 @@ class MainActivity : AppCompatActivity() {
             // Set loading state to completed
             custom_button.buttonState = ButtonState.Completed
 
-            //TODO - show a toast to remind user to select a file
+            // Show a toast to remind user to select a file
             Toast.makeText(this, "Please select a file to download", Toast.LENGTH_SHORT).show()
 
         }
     }
 
     private fun createChannel(channelId: String, channelName: String) {
-        // START create a channel
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        // 1: Safety check the OS version for API 26 and greater
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+        {
+            // 2: Create a unique name for the notification channel
             val notificationChannel = NotificationChannel(
                     channelId,
                     channelName,
-                    // TODO: Step 2.4 change importance
+                    // Change importance
                     NotificationManager.IMPORTANCE_HIGH
             )
-            // TODO: Step 2.6 disable badges for this channel
 
             notificationChannel.enableLights(true)
             notificationChannel.lightColor = Color.RED
@@ -154,6 +162,8 @@ class MainActivity : AppCompatActivity() {
             val notificationManager = getSystemService(
                     NotificationManager::class.java
             )
+
+            // 3: Create the channel using notificationManager
             notificationManager.createNotificationChannel(notificationChannel)
 
         }
@@ -197,12 +207,10 @@ class MainActivity : AppCompatActivity() {
     // This is the code needed to create and trigger a notification
     fun NotificationManager.sendNotification(messageBody: String, applicationContext: Context) {
 
+        val channelId = "${applicationContext.packageName}-${applicationContext.getString(R.string.app_name)}"
+
         // Create intent with applicationContext and activity to be launched
         val contentIntent = Intent(applicationContext, DetailActivity::class.java)
-
-        // Set status to success
-        //status = getString(R.string.success_text)
-
         contentIntent.putExtra(FILE_NAME, fileName)
         contentIntent.putExtra(STATUS, status)
 
@@ -229,13 +237,10 @@ class MainActivity : AppCompatActivity() {
 
         // Call notify to send the notification
         notify(CHANNEL_ID, builder.build())
+
+        //LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(builder.build())
     }
 
-    // We want to be able to access without having instance of class
-//    companion object {
-//        const val FILE_NAME = "File Name"
-//        const val STATUS = "Status"
-//    }
 }
 
 
