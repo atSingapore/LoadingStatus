@@ -2,10 +2,7 @@ package com.udacity
 
 import android.animation.ValueAnimator
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Typeface
+import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
@@ -34,8 +31,8 @@ class LoadingButton @JvmOverloads constructor(
             // advice from mentor
             ButtonState.Loading -> {
                 Log.i("LoadingButton","Button state changed from complete to loading")
-                //TODO - Show loading text (access string resource)
-                buttonText = "We are loading"
+                // Show loading text (access string resource)
+                buttonText = resources.getString(R.string.button_loading)
 
                 //start the loading animation
                 // Change this
@@ -45,8 +42,6 @@ class LoadingButton @JvmOverloads constructor(
                         loadingStatus = valueAnimator.animatedValue as Float
                         invalidate() // redraws the button
                     }
-//                    repeatMode = ValueAnimator.REVERSE
-//                    repeatCount = ValueAnimator.INFINITE
                 }
                 valueAnimator.repeatMode = ValueAnimator.REVERSE
                 valueAnimator.repeatCount = ValueAnimator.INFINITE
@@ -55,9 +50,9 @@ class LoadingButton @JvmOverloads constructor(
             }
             //similarly handle the other 2 states as well
             ButtonState.Completed -> {
-                buttonText = "Click me"
+                // Show download text (access string resource)
+                buttonText = resources.getString(R.string.button_name)
                 Log.i("LoadingButton","Button state changed from loading to complete")
-                //TODO - Show Completed Text
                 valueAnimator.cancel()
                 loadingStatus = 0.0f
                 invalidate() // redraws the button
@@ -102,13 +97,11 @@ class LoadingButton @JvmOverloads constructor(
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         widthSize = width.toFloat()
         heightSize = height.toFloat()
-        buttonText = "Click me"
+        buttonText = resources.getString(R.string.button_name)
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-
-        //canvas.translate(0f, -heightSize/2)
 
         // Set the button color based on the loading status?
         paint.color = buttonBaseColor
@@ -120,11 +113,14 @@ class LoadingButton @JvmOverloads constructor(
         paint.color = buttonLoadingColor
         canvas.drawRect((width/2-widthSize/2).toFloat(), (height/2 - heightSize/2).toFloat(), (width/2-widthSize/2+loadingStatus).toFloat(), (height/2+heightSize/2).toFloat(), paint)
 
-
         // Draw the loading labels
-        paint.color = Color.BLACK
+        paint.color = Color.WHITE
+
         buttonText?.let {
-            canvas.drawText(buttonText!!, width/2-widthSize/5, height/2-heightSize*0, paint)
+            var bounds: Rect = Rect()
+            paint.getTextBounds(buttonText, 0, buttonText!!.length, bounds)
+            var textHeight = bounds.height()
+            canvas.drawText(buttonText!!, width/2.toFloat(), (height/2+textHeight/2).toFloat(), paint)
 
         }
     }

@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
@@ -98,11 +99,10 @@ class MainActivity : AppCompatActivity() {
             custom_button.buttonState = ButtonState.Loading
 
             // Make a directory
-//            val direct = File(getExternalFilesDir(null), "/repos")
-//            if (!direct.exists()) {
-//                direct.mkdirs()
-//            }
-
+            val direct = File(getExternalFilesDir(null), "/repos")
+            if (!direct.exists()) {
+                direct.mkdirs()
+            }
 
             Log.i("MainViewModel", "downloading $selectedURL")
             val request =
@@ -113,21 +113,14 @@ class MainActivity : AppCompatActivity() {
                             .setAllowedOverMetered(true)
                             .setAllowedOverRoaming(true)
                             // Save in directory
-                            //.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,"/repos/repository.zip" )
+                            .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,"/repos/repository.zip" )
 
             val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
 
             downloadID =
                     downloadManager.enqueue(request)// enqueue puts the download request in the queue.
 
-//            notificationManager = ContextCompat.getSystemService(applicationContext, NotificationManager::class.java) as NotificationManager
-//            if(this::notificationManager.isInitialized) {
-//                notificationManager.sendNotification(
-//                        applicationContext.getString(R.string.notification_description),
-//                        applicationContext)
-//            }
-
-
+            // No longer creating an instance of the notification manager here
 
         } else
         {
@@ -167,14 +160,7 @@ class MainActivity : AppCompatActivity() {
             notificationManager.createNotificationChannel(notificationChannel)
 
         }
-
-//        val builder = NotificationCompat.Builder(
-//                applicationContext,
-//                // TODO: Step 1.8 verify the notification channel name
-//                applicationContext.getString(R.string.notification_id)
-//        )
     }
-
 
 
     fun onGlideSelected(view: View)
@@ -222,12 +208,20 @@ class MainActivity : AppCompatActivity() {
                 contentIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT)
 
+
+        val happyImage = BitmapFactory.decodeResource(applicationContext.resources, R.drawable.done)
+        val bigPicStyle = NotificationCompat.BigPictureStyle()
+                .bigPicture(happyImage)
+                .bigLargeIcon(null)
+
         // Get an instance of NotificationCompat.Builder
         val builder = NotificationCompat.Builder(
                 applicationContext,
                 applicationContext.getString(R.string.notification_id))
                 // Set title, text and icon to builder
                 .setSmallIcon(R.drawable.circle_icons_download)
+                .setStyle(bigPicStyle)
+                .setLargeIcon(happyImage)
                 .setContentTitle(applicationContext.getString(R.string.notification_title))
                 .setContentText(messageBody)
 
